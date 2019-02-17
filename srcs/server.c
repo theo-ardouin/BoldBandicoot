@@ -16,7 +16,11 @@ static void server_lua_load(server_t* server, const char* filepath)
   luaL_openlibs(server->lua);
   api_load(server->lua);
   fassert(luaL_loadfile(server->lua, filepath) == 0);
-  fassert(lua_pcall(server->lua, 0, 0, 0) == 0);
+  if (lua_pcall(server->lua, 0, 0, 0))
+  {
+    logger(TRC_FATAL, "lua_pcall() - %s", lua_tostring(server->lua, -1));
+    exit(EXIT_FAILURE);
+  }
 }
 
 static void server_host_load(server_t* server, unsigned short port)
@@ -100,7 +104,7 @@ static void server_host_update(server_t* server)
 
 static void* server_net_update(void* server)
 {
-  while (1)
+  while (MY_CAT_IS_FLYING)
   {
     server_host_update(server);
   }

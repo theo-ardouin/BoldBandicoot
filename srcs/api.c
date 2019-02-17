@@ -21,7 +21,7 @@ static int api_send(lua_State* L)
 
   pthread_mutex_lock(&_mutex_send);
 
-  ENetPacket* packet = enet_packet_create(str, strlen(str) + 1, ENET_PACKET_FLAG_RELIABLE);
+  ENetPacket* packet = enet_packet_create(str, strlen(str), ENET_PACKET_FLAG_RELIABLE);
   enet_peer_send(peer, channelId, packet);
 
   pthread_mutex_unlock(&_mutex_send);
@@ -41,7 +41,7 @@ static int api_send_all(lua_State* L)
 
   pthread_mutex_lock(&_mutex_send);
 
-  ENetPacket* packet = enet_packet_create(str, strlen(str) + 1, ENET_PACKET_FLAG_RELIABLE);
+  ENetPacket* packet = enet_packet_create(str, strlen(str), ENET_PACKET_FLAG_RELIABLE);
   enet_host_broadcast(server->host, channelId, packet);
 
   pthread_mutex_unlock(&_mutex_send);

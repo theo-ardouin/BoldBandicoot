@@ -10,7 +10,7 @@ LIBS = -lenet -llua -lm -ldl -lpthread
 
 CC = gcc
 
-CFLAGS = -Wall -Wextra -Werror -std=gnu99 $(INCLUDES)
+CFLAGS = -Wall -Wextra -Werror -std=gnu99 -Ofast $(INCLUDES)
 
 all: $(OBJS)
 	$(CC) -o $(NAME) $(OBJS) $(LIBS)

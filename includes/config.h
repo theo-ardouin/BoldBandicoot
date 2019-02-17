@@ -2,9 +2,9 @@
 #define CONFIG_H_
 
 #define DEFAULT_SCRIPT    "scripts/main.lua"
-#define DEFAULT_PORT      8173
-#define DEFAULT_TICKRATE  0.2
-#define DEFAULT_TIMEOUT   1
+#define DEFAULT_PORT      "8173"
+#define DEFAULT_TICKRATE  "0.2"
+#define DEFAULT_TIMEOUT   "1"
 
 typedef struct config
 {
