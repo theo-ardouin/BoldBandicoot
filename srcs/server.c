@@ -1,4 +1,5 @@
 #include <stdlib.h>
+#include <string.h>
 #include <unistd.h>
 
 #include <lualib.h>
@@ -9,6 +10,20 @@
 #include "logger.h"
 #include "fassert.h"
 
+static void execute_from(const char* filepath)
+{
+  char* last;
+  char dirname[strlen(filepath) + 1];
+
+  strcpy(dirname, filepath);
+  last = strrchr(dirname, '/');
+  if (last != NULL)
+  {
+    *last = 0;
+    fassert(chdir(dirname) == 0);
+  }
+}
+
 static void server_lua_load(server_t* server, const char* filepath)
 {
   server->lua = luaL_newstate();
@@ -16,6 +31,7 @@ static void server_lua_load(server_t* server, const char* filepath)
   luaL_openlibs(server->lua);
   api_load(server->lua);
   fassert(luaL_loadfile(server->lua, filepath) == 0);
+  execute_from(filepath);
   if (lua_pcall(server->lua, 0, 0, 0))
   {
     logger(TRC_FATAL, "lua_pcall() - %s", lua_tostring(server->lua, -1));
