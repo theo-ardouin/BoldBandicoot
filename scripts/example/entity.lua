@@ -1,5 +1,5 @@
-local Point = require("scripts.example.point")
-local Packets = require("scripts.example.packets")
+local Point = require("point")
+local Packets = require("packets")
 
 local Entity = {}
 

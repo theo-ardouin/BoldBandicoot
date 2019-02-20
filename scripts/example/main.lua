@@ -1,8 +1,8 @@
-local UID = require("scripts.example.UID")
-local Tools = require("scripts.example.tools")
-local World = require("scripts.example.world")
-local Entity = require("scripts.example.entity")
-local Packets = require("scripts.example.packets")
+local UID = require("UID")
+local Tools = require("tools")
+local World = require("world")
+local Entity = require("entity")
+local Packets = require("packets")
 
 local _world = World.new()
 local _packets = {

@@ -1,4 +1,4 @@
-local Tools = require("scripts.example.tools")
+local Tools = require("tools")
 
 local World = {}
 

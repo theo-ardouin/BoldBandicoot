@@ -1,41 +1,32 @@
 #include <stdlib.h>
-#include <string.h>
 #include <unistd.h>
 
 #include <lualib.h>
 #include <lauxlib.h>
 
 #include "api.h"
+#include "tools.h"
 #include "server.h"
 #include "logger.h"
 #include "fassert.h"
 
-static void execute_from(const char* filepath)
-{
-  char* last;
-  char dirname[strlen(filepath) + 1];
-
-  strcpy(dirname, filepath);
-  last = strrchr(dirname, '/');
-  if (last != NULL)
-  {
-    *last = 0;
-    fassert(chdir(dirname) == 0);
-  }
-}
-
 static void server_lua_load(server_t* server, const char* filepath)
 {
+  int lua_file_loading;
   server->lua = luaL_newstate();
 
   luaL_openlibs(server->lua);
   api_load(server->lua);
-  fassert(luaL_loadfile(server->lua, filepath) == 0);
-  execute_from(filepath);
+  lua_file_loading = luaL_loadfile(server->lua, filepath);
+  if (lua_file_loading == LUA_ERRSYNTAX)
+  {
+    tools_lua_fatal(server->lua);
+  }
+  fassert(lua_file_loading == 0);
+  tools_execute_from(filepath);
   if (lua_pcall(server->lua, 0, 0, 0))
   {
-    logger(TRC_FATAL, "lua_pcall() - %s", lua_tostring(server->lua, -1));
-    exit(EXIT_FAILURE);
+    tools_lua_fatal(server->lua);
   }
 }
 
