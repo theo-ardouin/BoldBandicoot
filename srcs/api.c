@@ -6,7 +6,7 @@
 
 #include "server.h"
 
-pthread_mutex_t _mutex_send = PTHREAD_MUTEX_INITIALIZER;
+static pthread_mutex_t _mutex_send = PTHREAD_MUTEX_INITIALIZER;
 
 static int api_send(lua_State* L)
 {

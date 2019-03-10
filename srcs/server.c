@@ -10,6 +10,8 @@
 #include "logger.h"
 #include "fassert.h"
 
+static pthread_mutex_t _mutex_lua = PTHREAD_MUTEX_INITIALIZER;
+
 static void server_lua_load(server_t* server, const char* filepath)
 {
   int lua_file_loading;
@@ -42,6 +44,8 @@ static void server_host_load(server_t* server, unsigned short port)
 
 static void server_update(server_t* server, float dt)
 {
+  pthread_mutex_lock(&_mutex_lua);
+
   lua_getglobal(server->lua, "onUpdate");
   lua_pushlightuserdata(server->lua, server);
   lua_pushnumber(server->lua, dt);
@@ -49,10 +53,14 @@ static void server_update(server_t* server, float dt)
   {
     logger(TRC_ERR, "onUpdate - %s", lua_tostring(server->lua, -1));
   }
+
+  pthread_mutex_unlock(&_mutex_lua);
 }
 
 static void server_connect(server_t* server, ENetPeer* peer)
 {
+  pthread_mutex_lock(&_mutex_lua);
+
   lua_getglobal(server->lua, "onConnect");
   lua_pushlightuserdata(server->lua, server);
   lua_pushlightuserdata(server->lua, peer);
@@ -60,10 +68,14 @@ static void server_connect(server_t* server, ENetPeer* peer)
   {
     logger(TRC_ERR, "onConnect - %s", lua_tostring(server->lua, -1));
   }
+
+  pthread_mutex_unlock(&_mutex_lua);
 }
 
 static void server_disconnect(server_t* server, ENetPeer* peer)
 {
+  pthread_mutex_lock(&_mutex_lua);
+
   lua_getglobal(server->lua, "onDisconnect");
   lua_pushlightuserdata(server->lua, server);
   lua_pushlightuserdata(server->lua, peer);
@@ -71,10 +83,14 @@ static void server_disconnect(server_t* server, ENetPeer* peer)
   {
     logger(TRC_ERR, "onDisconnect - %s", lua_tostring(server->lua, -1));
   }
+
+  pthread_mutex_unlock(&_mutex_lua);
 }
 
 static void server_packet(server_t* server, ENetPeer* peer, ENetPacket* packet)
 {
+  pthread_mutex_lock(&_mutex_lua);
+
   lua_getglobal(server->lua, "onPacket");
   lua_pushlightuserdata(server->lua, server);
   lua_pushlightuserdata(server->lua, peer);
@@ -83,6 +99,8 @@ static void server_packet(server_t* server, ENetPeer* peer, ENetPacket* packet)
   {
     logger(TRC_ERR, "onPacket - %s", lua_tostring(server->lua, -1));
   }
+
+  pthread_mutex_unlock(&_mutex_lua);
 }
 
 static void server_host_update(server_t* server)
